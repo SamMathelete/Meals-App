@@ -6,6 +6,8 @@ import MealDetail from "../components/MealDetail";
 import Subtitle from "../components/MealComponents/Subtitle";
 import List from "../components/MealComponents/List";
 import IconButton from "../components/IconButton";
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+import { addAction, removeAction } from "../store/redux/favourites";
 
 type RootStackParamList = {
   MealDetails: { mealID: string };
@@ -14,15 +16,27 @@ type RootStackParamList = {
 type Props = NativeStackScreenProps<RootStackParamList, "MealDetails">;
 
 const MealDetails: React.FC<Props> = ({ navigation, route }) => {
+  const mealID = route.params.mealID;
+  const selectedMeal = MEALS.find((meal) => meal.id === mealID);
+  const favs = useAppSelector((state) => state.favouriteMeals.id);
+  const dispatch = useAppDispatch();
+
+  const mealIsFavourite = favs.includes(mealID);
+
   const headerButtonPressHandler = () => {
-    console.log("Pressed!!!");
+    if (mealIsFavourite) {
+      dispatch(removeAction(mealID));
+    } else {
+      dispatch(addAction(mealID));
+    }
   };
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => {
         return (
           <IconButton
-            icon="star"
+            icon={mealIsFavourite ? "star" : "star-outline"}
             color="white"
             onPress={headerButtonPressHandler}
           />
@@ -31,8 +45,6 @@ const MealDetails: React.FC<Props> = ({ navigation, route }) => {
     });
   }, [navigation, headerButtonPressHandler]);
 
-  const mealID = route.params.mealID;
-  const selectedMeal = MEALS.find((meal) => meal.id === mealID);
   return (
     <ScrollView style={{ marginBottom: 32 }}>
       <Image

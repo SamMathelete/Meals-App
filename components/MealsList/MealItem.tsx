@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from "react-native";
-import MealDetail from "./MealDetail";
+import MealDetail from "../MealDetail";
 
 type RootStackParamList = {
   MealItem: undefined;
